@@ -1,5 +1,4 @@
 #!/bin/bash
-# vs_tmux_control.sh - Скрипт для управління сервером Vintage Story через tmux
 
 SESSION_NAME="VintagestoryServer"
 SERVER_PATH="/usr/share/vintagestory/VintagestoryServer"
