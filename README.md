@@ -10,7 +10,7 @@ Runs playit, server command line and the server itself
 **VS Server** just runs on the top panel, if it stops, the tmux session stops (so `exit` stops the session).
 
 # Instructions
-- Get the script
+- Get the script (`VServer`)
 - Make sure tmux is installed
 - Make sure `SERVER_PATH` in the script points to your VS server binary
 - Make the script executable (using chmod +x VServer, or your file manager)
