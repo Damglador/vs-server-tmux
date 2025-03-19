@@ -1,0 +1,103 @@
+#!/bin/bash
+# vs_tmux_control.sh - Скрипт для управління сервером Vintage Story через tmux
+
+SESSION_NAME="VintagestoryServer"
+SERVER_PATH="/usr/share/vintagestory/VintagestoryServer"
+ENABLE_PLAYIT="1" 
+# 1 - will start playit in the background with the server, 
+# 0 - will start just the server
+
+# Check if tmux exists
+if ! command -v tmux &> /dev/null; then
+    echo "ERROR: tmux is not installed. Install tmux using your package manager."
+    exit 1
+fi
+
+# Check if server executable exists
+if [ ! -f "$SERVER_PATH" ]; then
+    echo "ERROR: Server Vintage Story couldn't be found in $SERVER_PATH"
+    echo "Edit SERVER_PATH in the script."
+    exit 1
+fi
+
+# Kill existing session, if there is
+if tmux has-session -t "$SESSION_NAME" 2>/dev/null; then
+    echo "Session $SESSION_NAME exists. Killing..."
+    tmux kill-session -t "$SESSION_NAME"
+fi
+
+# Make a temp file for the script
+TEMP_SCRIPT=$(mktemp)
+
+# Script for command panel
+cat > "$TEMP_SCRIPT" << 'EOL'
+#!/bin/bash
+
+# Command prompt
+PS1="VS Command> "
+
+
+# Ctrl+C (SIGINT) handler
+trap '' SIGINT
+
+# Command handler
+function send_command() {
+  if [ "$1" = "exit" ]; then
+    echo "Closing server..."
+    tmux send-keys -t SESSION_PLACEHOLDER:0.0 "/stop" ENTER
+    echo "Waiting for server to quit... (type 'killserver' to kill)"
+  elif [ "$1" = "killserver" ]; then
+    tmux kill-session -t SESSION_PLACEHOLDER
+  else
+    tmux send-keys -t SESSION_PLACEHOLDER:0.0 "/$1" ENTER
+  fi
+}
+
+# Clear screen
+clear
+
+# Instructions
+echo "Enter server command and see output above (dont have to use /). 'exit' will shutdown the server and session:"
+
+# History implementation
+HISTFILE="$HOME/.vs_command_history"
+HISTSIZE=1000
+SAVEHIST=1000
+set -o history
+
+while true; do
+  read -e -p "$PS1" cmd
+  history -s "$cmd"
+  send_command "$cmd"
+done
+EOL
+
+# Replacing placeholders with real values
+sed -i "s/SESSION_PLACEHOLDER/$SESSION_NAME/g" "$TEMP_SCRIPT"
+chmod +x "$TEMP_SCRIPT"
+
+# Creating new session
+tmux new-session -d -s "$SESSION_NAME" -n "server"
+
+# Setting up big panel for server
+tmux send-keys -t "$SESSION_NAME" "$SERVER_PATH && tmux kill-session -t $SESSION_NAME" ENTER
+
+# Setting up small panel for command line
+tmux split-window -v -t "$SESSION_NAME" -p 10
+tmux select-pane -t "$SESSION_NAME:0.1"
+
+# Launching command line shell
+tmux send-keys -t "$SESSION_NAME:0.1" "$TEMP_SCRIPT" ENTER
+
+if [ "$ENABLE_PLAYIT" -eq 1 ]; then
+  # Create a window with playit and go back to the main one
+  tmux new-window -n "playit" -t "$SESSION_NAME"
+  tmux send-keys -t "$SESSION_NAME:1" "playit" ENTER
+  tmux select-window -t :0
+fi
+
+# Deleting command line temp script
+trap "rm -f $TEMP_SCRIPT" EXIT
+
+# Connecting to session
+tmux attach-session -t "$SESSION_NAME"
