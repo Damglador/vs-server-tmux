@@ -1,0 +1,22 @@
+#!/usr/bin/env bash
+
+
+trap "" SIGINT
+while true; do
+	read -erp "VS Server> " input
+	case "$input" in
+		"exit")
+	   		echo "Shutting down the server"
+	   		tmux send-keys -t "$1:Manager.0" "^C" ENTER
+	   		;;
+	   "clear")
+	   		clear;;
+	   "killserver")
+	   		tmux kill-session -t "$1";;
+		"test")
+	   		echo $1;;
+	 	*)
+	 		tmux send-keys -t "$1:Manager.0" "/$input" ENTER;;
+	esac
+	history -s $input
+done

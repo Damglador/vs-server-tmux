@@ -1,0 +1,31 @@
+#!/usr/bin/env bash
+
+SERVER_BIN="/usr/share/vintagestory/VintagestoryServer"
+
+SESSION_NAME="VSServer"
+
+# Pls don't touch
+SERVER_COMMAND="$SERVER_BIN && tmux kill-session -t '$SESSION_NAME'"
+CMD_COMMAND="echo 'Commands entered here will be sent to server with / added at the beginning. «exit» will shut down the server.';$(dirname $0)/vsscmd '$SESSION_NAME'"
+
+# Enable mouse support
+tmux set -g mouse on
+
+# Kill session if exists and create it after
+if (tmux ls | grep "$SESSION_NAME:"); then
+	tmux kill-session -t "$SESSION_NAME"
+fi
+tmux new-session -d -s "$SESSION_NAME" -n Manager
+
+# Top panel
+tmux send-keys -t "$SESSION_NAME":Manager.0 "$SERVER_COMMAND" ENTER
+# Bottom panel
+tmux split-window -t "$SESSION_NAME":Manager.0 -l 2 "$CMD_COMMAND"
+
+
+# playit in another window
+tmux new-window -n playit -t "$SESSION_NAME"
+tmux select-window -t "$SESSION_NAME":Manager
+tmux send-keys -t "$SESSION_NAME":playit "playit" ENTER
+
+tmux attach -t "$SESSION_NAME"
