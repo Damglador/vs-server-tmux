@@ -3,10 +3,11 @@
 SERVER_BIN="/usr/share/vintagestory/VintagestoryServer"
 
 SESSION_NAME="VSServer"
+ENABLE_PLAYIT="1"
 
 # Pls don't touch
 SERVER_COMMAND="$SERVER_BIN && tmux kill-session -t '$SESSION_NAME'"
-CMD_COMMAND="echo 'Commands entered here will be sent to server with / added at the beginning. «exit» will shut down the server.';$(dirname $0)/vsscmd '$SESSION_NAME'"
+CMD_COMMAND="echo 'Commands entered here will be sent to server with / added at the beginning. «exit» will shut down the server.';$(dirname $0)/vss-cmd '$SESSION_NAME'"
 
 # Enable mouse support
 tmux set -g mouse on
@@ -22,10 +23,11 @@ tmux send-keys -t "$SESSION_NAME":Manager.0 "$SERVER_COMMAND" ENTER
 # Bottom panel
 tmux split-window -t "$SESSION_NAME":Manager.0 -l 2 "$CMD_COMMAND"
 
-
-# playit in another window
-tmux new-window -n playit -t "$SESSION_NAME"
-tmux select-window -t "$SESSION_NAME":Manager
-tmux send-keys -t "$SESSION_NAME":playit "playit" ENTER
+if ENABLE_PLAYIT == 1; then
+	# playit in another window
+	tmux new-window -n playit -t "$SESSION_NAME"
+	tmux select-window -t "$SESSION_NAME":Manager
+	tmux send-keys -t "$SESSION_NAME":playit "playit" ENTER
+fi
 
 tmux attach -t "$SESSION_NAME"
