@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+
+echo "$STATUS_FILE"
+
+STATUS=$(cat "$STATUS_FILE")
+if [ "$STATUS" = "exit" ]; then
+	echo "$STATUS"
+	rm "$STATUS_FILE"
+	tmux kill-session -t "$SESSION_NAME"
+elif [ "$STATUS" = "restart" ]; then
+	echo "" > "$STATUS_FILE"
+    "$SERVER_BIN" ; "$0" $@
+fi

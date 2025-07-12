@@ -1,16 +1,20 @@
 #!/usr/bin/env bash
 
-SERVER_BIN="/usr/share/vintagestory/VintagestoryServer"
+SHELL=$(which bash)
 
-SESSION_NAME="VSServer"
-ENABLE_PLAYIT="1"
+ENABLE_PLAYIT="0"
+export SERVER_BIN="/usr/share/vintagestory/VintagestoryServer"
+export SESSION_NAME="VSServer"
+
+export STATUS_FILE=$(mktemp)
 
 # Pls don't touch
-SERVER_COMMAND="$SERVER_BIN && tmux kill-session -t '$SESSION_NAME'"
-CMD_COMMAND="echo 'Commands entered here will be sent to server with / added at the beginning. «exit» will shut down the server.';$(dirname $0)/vss-cmd '$SESSION_NAME'"
+SERVER_COMMAND="'$SERVER_BIN' ; $(dirname $0)/vss-exit"
+CMD_COMMAND="
+echo 'Commands entered here will be sent to server with / added at the beginning. «exit» will shut down the server.'
+$(dirname $0)/vss-cmd
+"
 
-# Enable mouse support
-tmux set -g mouse on
 
 # Kill session if exists and create it after
 if (tmux ls | grep "$SESSION_NAME:"); then
@@ -23,7 +27,7 @@ tmux send-keys -t "$SESSION_NAME":Manager.0 "$SERVER_COMMAND" ENTER
 # Bottom panel
 tmux split-window -t "$SESSION_NAME":Manager.0 -l 2 "$CMD_COMMAND"
 
-if ENABLE_PLAYIT == 1; then
+if [ $ENABLE_PLAYIT = 1 ]; then
 	# playit in another window
 	tmux new-window -n playit -t "$SESSION_NAME"
 	tmux select-window -t "$SESSION_NAME":Manager
