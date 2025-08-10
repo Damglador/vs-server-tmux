@@ -9,5 +9,5 @@ if [ "$STATUS" = "exit" ]; then
 	tmux kill-session -t "$SESSION_NAME"
 elif [ "$STATUS" = "restart" ]; then
 	echo "" > "$STATUS_FILE"
-    "$SERVER_BIN" ; "$0" $@
+    "$SERVER_BIN" ; "$0" "$@"
 fi

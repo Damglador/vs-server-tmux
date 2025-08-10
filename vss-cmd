@@ -25,5 +25,5 @@ while true; do
 		*)
 			tmux send-keys -t "$SESSION_NAME:Manager.0" "/$input" ENTER;;
 	esac
-	history -s $input
+	history -s "$input"
 done

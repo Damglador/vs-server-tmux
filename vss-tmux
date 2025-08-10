@@ -3,16 +3,16 @@
 SHELL=$(which bash)
 
 ENABLE_PLAYIT="0"
-export SERVER_BIN="/usr/share/vintagestory/VintagestoryServer"
+export SERVER_BIN="/usr/share/vintagestory-unstable/VintagestoryServer"
 export SESSION_NAME="VSServer"
 
 export STATUS_FILE=$(mktemp)
 
 # Pls don't touch
-SERVER_COMMAND="'$SERVER_BIN' ; $(dirname $0)/vss-exit"
+SERVER_COMMAND="'$SERVER_BIN' ; $(dirname "$0")/vss-exit"
 CMD_COMMAND="
 echo 'Commands entered here will be sent to server with / added at the beginning. «exit» will shut down the server.'
-$(dirname $0)/vss-cmd
+$(dirname "$0")/vss-cmd
 "
 
 
