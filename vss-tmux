@@ -2,7 +2,7 @@
 
 SHELL=$(which bash)
 
-ENABLE_PLAYIT="0"
+ENABLE_PLAYIT="1"
 export SERVER_BIN="/opt/vintagestory/VintagestoryServer"
 export SESSION_NAME="VSServer"
 

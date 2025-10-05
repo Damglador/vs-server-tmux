@@ -5,7 +5,7 @@ while true; do
 	read -erp "VS Server> " input
 	case "$input" in
 		"exit"|"shutdown")
-			echo "Shutting down the server"
+			echo "[vss-tmux] Shutting down the server"
 			echo "exit" > "$STATUS_FILE"
 			tmux send-keys -t "$SESSION_NAME:Manager.0" "^C" ENTER
 		;;
@@ -13,15 +13,17 @@ while true; do
 			echo "restart" > "$STATUS_FILE"
 			tmux send-keys -t "$SESSION_NAME:Manager.0" "^C" ENTER
 		;;
+		"playit-restart"|"restart-playit")
+		    echo "[vss-tmux] Restarting playit"
+		    tmux send-keys -t "$SESSION_NAME":playit "^C" ENTER
+		    tmux send-keys -t "$SESSION_NAME":playit "playit" ENTER
+		;;
 		"clear")
 			clear;;
 		"killserver")
 			rm "$STATUS_FILE"
 			tmux kill-session -t "$SESSION_NAME"
 		;;
-		"test")
-			echo "$SESSION_NAME";;
-		"nah") bash;;
 		*)
 			tmux send-keys -t "$SESSION_NAME:Manager.0" "/$input" ENTER;;
 	esac

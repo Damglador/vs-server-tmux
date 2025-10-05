@@ -1,8 +1,3 @@
 #!/usr/bin/env bash
-TABS=$(mktemp)
 
-printf "title: Console;; command: $(dirname "$0")/vss-tmux
-title: playit;; command: playit" > "$TABS"
-
-konsole --tabs-from-file "$TABS"
-# konsole -e $(dirname $0)/vss-tmux
+konsole -e $(dirname $0)/vss-tmux
