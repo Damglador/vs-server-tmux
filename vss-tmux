@@ -8,8 +8,10 @@ export SESSION_NAME="VSServer"
 
 export STATUS_FILE=$(mktemp)
 
+INHIBITOR_COMMAND="systemd-inhibit --what=idle --who='VintagestoryServer' --why='Server is running'"
+
 # Pls don't touch
-SERVER_COMMAND="'$SERVER_BIN' ; $(dirname "$0")/vss-exit"
+SERVER_COMMAND="$INHIBITOR_COMMAND '$SERVER_BIN' ; $(dirname "$0")/vss-exit"
 CMD_COMMAND="
 echo 'Commands entered here will be sent to server with / added at the beginning. «exit» will shut down the server.'
 $(dirname "$0")/vss-cmd
