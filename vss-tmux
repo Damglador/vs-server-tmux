@@ -3,7 +3,7 @@
 SHELL=$(which bash)
 
 ENABLE_PLAYIT="0"
-export SERVER_BIN="/usr/share/vintagestory-unstable/VintagestoryServer"
+export SERVER_BIN="/opt/vintagestory/VintagestoryServer"
 export SESSION_NAME="VSServer"
 
 export STATUS_FILE=$(mktemp)
