@@ -7,6 +7,7 @@ export SERVER_BIN="/opt/vintagestory/VintagestoryServer"
 export SESSION_NAME="VSServer"
 
 export STATUS_FILE=$(mktemp)
+export HISTORY="$(dirname "$0")/.history"
 
 INHIBITOR_COMMAND="systemd-inhibit --what=idle --who='VintagestoryServer' --why='Server is running'"
 
@@ -22,18 +23,16 @@ $(dirname "$0")/vss-cmd
 if (tmux ls | grep "$SESSION_NAME:"); then
 	tmux kill-session -t "$SESSION_NAME"
 fi
-tmux new-session -d -s "$SESSION_NAME" -n Manager
 
 # Top panel
-tmux send-keys -t "$SESSION_NAME":Manager.0 "$SERVER_COMMAND" ENTER
+tmux new-session -d -s "$SESSION_NAME" -n Manager "$SERVER_COMMAND"
 # Bottom panel
 tmux split-window -t "$SESSION_NAME":Manager.0 -l 2 "$CMD_COMMAND"
 
 if [ $ENABLE_PLAYIT = 1 ]; then
 	# playit in another window
-	tmux new-window -n playit -t "$SESSION_NAME"
+	tmux new-window -n playit -t "$SESSION_NAME" "playit"
 	tmux select-window -t "$SESSION_NAME":Manager
-	tmux send-keys -t "$SESSION_NAME":playit "playit" ENTER
 fi
 
 tmux attach -t "$SESSION_NAME"

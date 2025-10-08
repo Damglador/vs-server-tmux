@@ -1,7 +1,5 @@
 #!/usr/bin/env bash
 
-echo "$STATUS_FILE"
-
 STATUS=$(cat "$STATUS_FILE")
 if [ "$STATUS" = "exit" ]; then
 	echo "$STATUS"
